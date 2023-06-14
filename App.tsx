@@ -5,11 +5,12 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaView, StatusBar, useColorScheme} from 'react-native';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import Products from './components/Products';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -27,6 +28,7 @@ function App(): JSX.Element {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={backgroundStyle.backgroundColor}
         />
+        <Products />
       </SafeAreaView>
     </QueryClientProvider>
   );
