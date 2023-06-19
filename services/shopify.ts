@@ -2,9 +2,6 @@ import Config from 'react-native-config';
 import {OrdersResponse, ProductsResponse} from '../types/shopify';
 
 export const fetchShopifyOrders = async (): Promise<OrdersResponse> => {
-  console.log(
-    `https://${Config.SHOPIFY_KEY}:${Config.SHOPIFY_PASS}@${Config.SHOPIFY_BASE_URL}/admin/api/2020-04/orders.json`,
-  );
   const resp = await fetch(
     `https://${Config.SHOPIFY_KEY}:${Config.SHOPIFY_PASS}@${Config.SHOPIFY_BASE_URL}/admin/api/2020-04/orders.json`,
   ).catch(e => {

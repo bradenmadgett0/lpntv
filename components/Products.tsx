@@ -23,8 +23,6 @@ const Products = (): JSX.Element => {
     fetchShopifyProducts(),
   );
 
-  console.log(productData?.products?.length);
-
   return (
     <ProductsView>
       {isLoading ? (
@@ -33,7 +31,11 @@ const Products = (): JSX.Element => {
         <FlashList
           data={productData?.products || []}
           renderItem={({item}) => (
-            <ProductEntry title={item.title} images={item.images} />
+            <ProductEntry
+              title={item.title}
+              images={item.images}
+              variants={item.variants}
+            />
           )}
           contentContainerStyle={{
             padding: 8,
