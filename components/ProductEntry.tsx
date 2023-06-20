@@ -8,7 +8,7 @@ import {FlatList} from 'react-native';
 interface ProductEntryProps {
   title: string;
   image: any;
-  variants: any[];
+  variants: any[]; // TODO: add proper typing
   itemsSold: {[key: string]: number};
 }
 
