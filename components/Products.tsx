@@ -7,10 +7,10 @@ import {queryKeys} from '../util/enums';
 import {ProductsResponse} from '../types/shopify';
 import {FlashList} from '@shopify/flash-list';
 import styled from '@emotion/native';
-import ProductEntry from './ProductEntry';
+import ProductEntry, {PRODUCT_ENTRY_HEIGHT} from './ProductEntry';
 
 const ProductsView = styled.View`
-  height: 100%;
+  flex: 1;
   width: 100%;
 `;
 
@@ -33,14 +33,14 @@ const Products = (): JSX.Element => {
           renderItem={({item}) => (
             <ProductEntry
               title={item.title}
-              images={item.images}
+              image={item.image}
               variants={item.variants}
             />
           )}
           contentContainerStyle={{
             padding: 8,
           }}
-          estimatedItemSize={180}
+          estimatedItemSize={PRODUCT_ENTRY_HEIGHT}
           numColumns={2}
         />
       )}
