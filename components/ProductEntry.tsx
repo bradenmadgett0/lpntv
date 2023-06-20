@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import styled from '@emotion/native';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {formatCurrency} from '../util/currency';
 import {FlatList} from 'react-native';
@@ -9,8 +9,7 @@ interface ProductEntryProps {
   title: string;
   image: any;
   variants: any[];
-  numPurchased: number;
-  id: string;
+  itemsSold: {[key: string]: number};
 }
 
 interface LabelProps {
@@ -25,11 +24,9 @@ interface RowProps {
   flexDirection?: string;
 }
 
-export const PRODUCT_ENTRY_HEIGHT = 340;
-
 const ProductEntryWrapper = styled.View`
-  width: 100%;
-  height: ${`${PRODUCT_ENTRY_HEIGHT}px`};
+  flex: 1;
+  height: 320px;
   padding: 4px;
 `;
 
@@ -100,29 +97,23 @@ const PricingInfo = styled.View`
 const VariantButton = styled.TouchableOpacity<{selected: boolean}>`
   width: 30px;
   height: 30px;
-  background-color: orange;
-  border: ${props => (props.selected ? '3px solid #7255e9' : 'none')};
+  border: ${props =>
+    props.selected ? '5px solid #7255e9' : '2px solid black'};
   margin-left: 8px;
   margin-top: 8px;
   margin-bottom: 8px;
   box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
 `;
 
 const ProductEntry = ({
   title,
   image,
   variants,
-  numPurchased,
-  id,
+  itemsSold,
 }: ProductEntryProps): JSX.Element => {
-  const lastProductEntryId = useRef(id); // For use with FlashList recycling
   const [currentVariant, setCurrentVariant] = useState(variants?.[0]);
-
-  // For use with FlashList recycling
-  if (id !== lastProductEntryId.current) {
-    lastProductEntryId.current = id;
-    setCurrentVariant(variants?.[0]);
-  }
 
   return (
     <ProductEntryWrapper>
@@ -149,11 +140,12 @@ const ProductEntry = ({
             horizontal
             data={variants}
             style={{flexGrow: 0}}
-            renderItem={({item}) => (
+            renderItem={({item, index}) => (
               <VariantButton
                 onPress={() => setCurrentVariant(item)}
-                selected={currentVariant?.id === item.id}
-              />
+                selected={currentVariant?.id === item.id}>
+                <ProductLabel>{index + 1}</ProductLabel>
+              </VariantButton>
             )}
             keyExtractor={item => item.id}
           />
@@ -180,7 +172,7 @@ const ProductEntry = ({
                 </ProductLabel>
 
                 <ProductLabel padding={2} color="grey">
-                  {`${numPurchased} sold`}
+                  {`${itemsSold[currentVariant?.sku] || 0} sold`}
                 </ProductLabel>
               </Row>
             </PricingInfo>

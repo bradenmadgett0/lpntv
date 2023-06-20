@@ -1,15 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useMemo} from 'react';
-// import Products from './Products';
 import {useQuery} from 'react-query';
 import {queryKeys} from '../util/enums';
 import {fetchShopifyOrders, fetchShopifyProducts} from '../services/shopify';
 import styled from '@emotion/native';
 import {formatCurrency} from '../util/currency';
 import {ProductsResponse} from '../types/shopify';
-import {Text} from 'react-native';
-import {FlashList} from '@shopify/flash-list';
-import ProductEntry, {PRODUCT_ENTRY_HEIGHT} from './ProductEntry';
+import {FlatList, Text} from 'react-native';
+import ProductEntry from '../components/ProductEntry';
 
 interface OrdersLabelProps {
   color?: string;
@@ -45,12 +43,9 @@ const Home = (): JSX.Element => {
     () => fetchShopifyOrders(),
   );
 
-  const {
-    data: productData,
-    isLoading,
-    isError,
-  } = useQuery<ProductsResponse>(queryKeys.PRODUCTS, () =>
-    fetchShopifyProducts(),
+  const {data: productData, isLoading} = useQuery<ProductsResponse>(
+    queryKeys.PRODUCTS,
+    () => fetchShopifyProducts(),
   );
 
   const totalSales = useMemo(() => {
@@ -69,23 +64,18 @@ const Home = (): JSX.Element => {
 
     ordersData?.orders?.forEach(order => {
       order?.line_items?.forEach((item: any) => {
-        if (item?.product_id) {
-          if (item.product_id in itemMap) {
-            itemMap[item.product_id] = itemMap[item.product_id] + 1;
+        if (item?.sku) {
+          if (item.sku in itemMap) {
+            itemMap[item.sku] = itemMap[item.sku] + item.quantity;
           } else {
-            itemMap[item.product_id] = 1;
+            itemMap[item.sku] = item.quantity;
           }
-        } else {
-          console.log("NULL", item);
         }
       });
     });
 
-    console.log(itemMap);
     return itemMap;
   }, [ordersData]);
-
-  console.log(itemsSoldList);
 
   return (
     <HomeContent>
@@ -104,22 +94,18 @@ const Home = (): JSX.Element => {
         {isLoading ? (
           <Text>Loading products...</Text>
         ) : (
-          <FlashList
+          <FlatList
+            numColumns={2}
             data={productData?.products || []}
+            keyExtractor={item => item.id}
             renderItem={({item}) => (
               <ProductEntry
                 title={item.title}
                 image={item.image}
                 variants={item.variants}
-                numPurchased={itemsSoldList[item.product_id] || 0}
-                id={item.id}
+                itemsSold={itemsSoldList}
               />
             )}
-            contentContainerStyle={{
-              padding: 8,
-            }}
-            estimatedItemSize={PRODUCT_ENTRY_HEIGHT}
-            numColumns={2}
           />
         )}
       </ProductsView>

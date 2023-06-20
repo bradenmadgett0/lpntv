@@ -10,7 +10,7 @@ import {SafeAreaView, StatusBar, useColorScheme} from 'react-native';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import Home from './components/Home';
+import Home from './pages/Home';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
