@@ -1,4 +1,4 @@
-import {formatCurrency} from '../../util/currency';
+import {formatCurrency} from '../util/currency';
 
 describe('Utility method tests', () => {
   test('Format currency should convert decimal to currency string', () => {
