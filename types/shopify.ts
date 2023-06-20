@@ -8,6 +8,7 @@ export interface OrdersResponse {
 
 export interface ProductsResponse {
   products: any[]; // Should create Product interface
+  nextLink?: string;
 }
 
 // export interface Product {

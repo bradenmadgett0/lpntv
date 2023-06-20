@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {useQuery} from 'react-query';
+import {useInfiniteQuery, useQuery} from 'react-query';
 import {queryKeys} from '../util/enums';
 import {fetchShopifyOrders, fetchShopifyProducts} from '../services/shopify';
 import styled from '@emotion/native';
@@ -36,15 +36,45 @@ const ProductsView = styled.View`
   width: 100%;
 `;
 
+const Loading = styled.View`
+  width: 100%;
+  height: 80px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #7255e9;
+  align-items: center;
+  justify-content: center;
+`;
+
+const LoadingText = styled.Text`
+  font-size: 18px;
+  color: white;
+  font-weight: bold;
+`;
+
 const Home = (): JSX.Element => {
   const {data: ordersData, isLoading: ordersLoading} = useQuery(
     queryKeys.ORDERS,
     () => fetchShopifyOrders(),
   );
 
-  const {data: productData, isLoading} = useQuery<ProductsResponse>(
-    queryKeys.PRODUCTS,
-    () => fetchShopifyProducts(),
+  const {
+    data: productData,
+    fetchNextPage,
+    isLoading,
+    isFetchingNextPage,
+  } = useInfiniteQuery<ProductsResponse>({
+    queryKey: [queryKeys.PRODUCTS],
+    queryFn: ({pageParam}) => fetchShopifyProducts(pageParam),
+    getNextPageParam: lastPage => {
+      return lastPage.nextLink;
+    },
+  });
+
+  const combinedPages = useMemo(
+    () => productData?.pages.map(page => page.products).flat(),
+    [productData?.pages],
   );
 
   // Calculate total of sales
@@ -78,8 +108,6 @@ const Home = (): JSX.Element => {
     return itemMap;
   }, [ordersData]);
 
-  console.log(itemsSoldList);
-
   return (
     <HomeContent>
       {ordersLoading ? (
@@ -99,8 +127,11 @@ const Home = (): JSX.Element => {
         ) : (
           <FlatList
             numColumns={2}
-            data={productData?.products || []}
+            data={combinedPages || []}
             keyExtractor={item => item.id}
+            onEndReached={() => {
+              fetchNextPage();
+            }}
             renderItem={({item}) => (
               <ProductEntry
                 title={item.title}
@@ -112,6 +143,11 @@ const Home = (): JSX.Element => {
           />
         )}
       </ProductsView>
+      {isFetchingNextPage && (
+        <Loading>
+          <LoadingText>Loading...</LoadingText>
+        </Loading>
+      )}
     </HomeContent>
   );
 };
