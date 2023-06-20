@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useMemo} from 'react';
 import {useQuery} from 'react-query';
 import {queryKeys} from '../util/enums';
@@ -48,6 +47,7 @@ const Home = (): JSX.Element => {
     () => fetchShopifyProducts(),
   );
 
+  // Calculate total of sales
   const totalSales = useMemo(() => {
     if (ordersData?.orders && ordersData?.orders.length > 0) {
       var runningTotal = 0;
@@ -59,6 +59,7 @@ const Home = (): JSX.Element => {
     return formatCurrency('0.00');
   }, [ordersData]);
 
+  // Calculate number of items sold by SKU
   const itemsSoldList = useMemo(() => {
     let itemMap: {[key: string]: number} = {};
 
@@ -76,6 +77,8 @@ const Home = (): JSX.Element => {
 
     return itemMap;
   }, [ordersData]);
+
+  console.log(itemsSoldList);
 
   return (
     <HomeContent>

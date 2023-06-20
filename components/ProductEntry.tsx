@@ -143,7 +143,8 @@ const ProductEntry = ({
             renderItem={({item, index}) => (
               <VariantButton
                 onPress={() => setCurrentVariant(item)}
-                selected={currentVariant?.id === item.id}>
+                selected={currentVariant?.id === item.id}
+                testID={`${item.id}`}>
                 <ProductLabel>{index + 1}</ProductLabel>
               </VariantButton>
             )}
