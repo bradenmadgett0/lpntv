@@ -72,6 +72,7 @@ const Home = (): JSX.Element => {
     },
   });
 
+  // Flatten products list for display purposes
   const combinedPages = useMemo(
     () => productData?.pages.map(page => page.products).flat(),
     [productData?.pages],
